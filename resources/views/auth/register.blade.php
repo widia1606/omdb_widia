@@ -38,21 +38,23 @@
 
             <div class="card card-primary">
               <div class="card-header"><h4>Register</h4></div>
-
               <div class="card-body">
-                <form method="POST">
+                <form method="POST" action="{{ url('/register') }}">
+                    @csrf
                   <div class="form-group">
-                    <label for="full_name">Full Name</label>
-                    <input id="full_name" type="text" class="form-control" name="full_name">
-                    <div class="invalid-feedback">
-                    </div>
+                    <label for="name">Full Name</label>
+                    <input id="name" type="text" class="form-control" name="name">
+                    @error('name')
+                        <span class="text-danger text-sm">{{ $message }}</span>
+                    @enderror
                   </div>
 
                   <div class="form-group">
                     <label for="email">Email</label>
                     <input id="email" type="email" class="form-control" name="email">
-                    <div class="invalid-feedback">
-                    </div>
+                    @error('email')
+                        <span class="text-danger text-sm">{{ $message }}</span>
+                    @enderror
                   </div>
 
                   <div class="row">
@@ -63,10 +65,13 @@
                         <div class="bar"></div>
                         <div class="label"></div>
                       </div>
+                      @error('password')
+                        <span class="text-danger text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="form-group col-6">
                       <label for="password2" class="d-block">Password Confirmation</label>
-                      <input id="password2" type="password" class="form-control" name="password-confirm">
+                      <input id="password2" type="password" class="form-control" name="password_confirmation">
                     </div>
                   </div>
 
@@ -77,6 +82,9 @@
                   </div>
                 </form>
               </div>
+            </div>
+            <div class="mt-5 text-muted text-center">
+              Already have an account? <a href="{{ route('login') }}">Login here</a>
             </div>
             <div class="simple-footer">
               Copyright &copy; Stisla <span id="year"></span>
@@ -99,6 +107,8 @@
   <!-- JS Libraies -->
   <script src="{{ asset('assets/modules/jquery-pwstrength/jquery.pwstrength.min.js')}}"></script>
   <script src="{{ asset('assets/modules/jquery-selectric/jquery.selectric.min.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
   <!-- Page Specific JS File -->
   <script src="{{ asset('assets/js/page/auth-register.js')}}"></script>
@@ -106,6 +116,19 @@
   <!-- Template JS File -->
   <script src="{{ asset('assets/js/scripts.js')}}"></script>
   <script src="{{ asset('assets/js/custom.js')}}"></script>
+
+  @if(session()->has('error'))
+  <script>
+    Swal.fire({
+        text: "{{ session()->get('error') }}",
+        icon: 'error',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    })
+  </script>
+  @endif
 
   <script>
     const year = document.getElementById('year');
