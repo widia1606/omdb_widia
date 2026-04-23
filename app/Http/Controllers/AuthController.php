@@ -59,4 +59,34 @@ class AuthController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan');
         }
     }
+
+    public function login(Request $request)
+    {
+        $validated = $request->validate([
+            'email'     => ['required', 'email', 'exists:users'],
+            'password'  => ['required']
+        ],[
+            'email.required' => 'Email wajib diisi',
+            'email.email'    => 'Email tidak valid',
+            'email.exists'    => 'Email tidak terdaftar',
+            'password.required' => 'Password wajib diisi'
+        ]);
+
+        try {
+            $response = $this->authService->login($validated);
+
+            if (!$response) {
+                return redirect()->back()->with('error', 'Kredensial tidak valid!');
+            }
+            return redirect('/panel-control')->with('success', 'Login berhasil');
+        } catch (\Throwable $th) {
+            Log::error([
+                'line'      => $th->getLine(),
+                'file'      => $th->getFile(),
+                'message'   => $th->getMessage(),
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan');
+        }
+    }
 }
